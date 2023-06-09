@@ -1,0 +1,31 @@
+default:
+  image: node:lts-slim
+  tags:
+    - linux
+    - docker
+
+stages:
+  - install
+  - build
+
+install:
+  stage: install
+  script:
+    - npm install --legacy-peer-deps
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - node_modules
+    policy: pull-push
+
+build-job:
+  stage: build
+  before_script:
+    - npm install --legacy-peer-deps
+    - apt update
+    - apt install python3 -y
+  script:
+    - export NODE_OPTIONS=--openssl-legacy-provider
+    - npm run build
